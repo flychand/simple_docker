@@ -1,6 +1,8 @@
 //Load express module with `require` directive
 var express = require('express')
 var bodyParser = require('body-parser')
+
+var NodeGeocoder = require('node-geocoder');
 var app = express()
 
 app.use(bodyParser.json());
@@ -24,6 +26,7 @@ app.post('/calculator/:opt?',function(req,res) {
         console.log("add")
         result = num1 + num2
         res.status(200).send((result).toString());
+
     }
     if(calc== "SUB" ){
         console.log("sub")
@@ -40,6 +43,31 @@ app.post('/calculator/:opt?',function(req,res) {
         result= num1 / num2
         res.status(200).send((result).toString());
     }
+})
+
+app.post('/map',function(req,res){
+
+    let location = req.body.address
+    var options = {
+        provider: 'google',
+      
+        // Optional depending on the providers
+        httpAdapter: 'https', // Default
+        apiKey: 'YOUR_API_KEY', // for Mapquest, OpenCage, Google Premier
+        formatter: null         // 'gpx', 'string', ...
+    };
+    var geocoder = NodeGeocoder(options);
+    geocoder.geocode(location, function(err, res) {
+        console.log("point fetched=============>",res);
+    });
+
+
+    geocoder.geocode('29 champs elysée paris').then(function(res) {
+    console.log(res);
+    }).catch(function(err) {
+        console.log(err);
+    });
+
 })
 
 //Launch listening server on port 8081
